@@ -29,9 +29,10 @@ async def on_ready():
 @bot.command()
 async def teachers(ctx):
 
+    await ctx.send(f"**Τα emails του Duth εδώ: <#{1265207476710805637}>**\n")
+
     with open("ihu_data/teachers.json", "rb") as f:
             teachers = json.load(f)
-
     e = discord.Embed(
         title=":bookmark_tabs: __Πληροφορίες Καθηγητών__ :bookmark_tabs:",
         colour=discord.Colour.red()
