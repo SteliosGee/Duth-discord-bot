@@ -1,7 +1,6 @@
 import requests
 import os
 import json
-import config
 
 def check_server_status(url):
     try:
@@ -23,12 +22,13 @@ def save_last_guid(guid):
         f.write(guid)
 
 async def save_message_id(message_id):
-    with open(config.MESSAGE_ID_FILE, 'w') as f:
+    with open('data/status_message_id.json', 'w') as f:
         json.dump({"message_id": message_id}, f)
 
 async def load_message_id():
-    if os.path.exists(config.MESSAGE_ID_FILE):
-        with open(config.MESSAGE_ID_FILE, 'r') as f:
+    if os.path.exists('data/status_message_id.json'):
+        with open('data/status_message_id.json', 'r') as f:
             data = json.load(f)
             return data.get("message_id")
     return None
+
