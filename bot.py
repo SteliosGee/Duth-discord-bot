@@ -3,6 +3,7 @@ from discord.ext import commands
 import config
 import asyncio
 from tasks import feed_checker, status_checker
+import os
 
 global_bot_commands = []
 
@@ -15,6 +16,7 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game("-help"))
+    print(os.getcwd())
     print("Bot is ready.")
     if config.hostname == "ihubot":
         
