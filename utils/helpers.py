@@ -30,3 +30,4 @@ async def load_message_id():
             return data.get("message_id")
     return None
 
+print(load_last_guid()) # Debug print
