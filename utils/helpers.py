@@ -1,5 +1,4 @@
 import requests
-import os
 import json
 
 def check_server_status(url):
@@ -9,15 +8,26 @@ def check_server_status(url):
     except requests.RequestException:
         return False, "Server is not reachable"
 
+import os
+
+# Get the absolute path of the duth_bot directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Adjust if needed
+
+def get_data_path(filename):
+    return os.path.join(BASE_DIR, "data", filename)
+
 def load_last_guid():
-    print(os.getcwd())
-    with open("data/last_guid.txt") as f:
+    print(os.getcwd())  # Debugging: Check working directory
+    file_path = get_data_path("last_guid.txt")
+    with open(file_path) as f:
         return f.read().strip()
     return None
 
 def save_last_guid(guid):
-    with open("data/last_guid.txt", "w") as f:
+    file_path = get_data_path("last_guid.txt")
+    with open(file_path, "w") as f:
         f.write(guid)
+
 
 async def save_message_id(message_id):
     with open('data/status_message_id.json', 'w') as f:

@@ -1,1 +1,1 @@
-http://cs.duth.gr:80/view_announcement.xhtml?id=1657
+http://cs.duth.gr:80/view_announcement.xhtml?id=1655
