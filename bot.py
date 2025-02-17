@@ -1,9 +1,10 @@
+import os
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 import discord
 from discord.ext import commands
 import config
 import asyncio
 from tasks import feed_checker, status_checker
-import os
 
 global_bot_commands = []
 
