@@ -10,11 +10,9 @@ def check_server_status(url):
         return False, "Server is not reachable"
 
 def load_last_guid():
-    print("test1")
-    if os.path.exists("data/last_guid.txt"):
-        print("test2")
-        with open("data/last_guid.txt") as f:
-            return f.read().strip()
+    print(os.getcwd())
+    with open("data/last_guid.txt") as f:
+        return f.read().strip()
     return None
 
 def save_last_guid(guid):
