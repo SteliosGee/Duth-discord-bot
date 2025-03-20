@@ -142,5 +142,17 @@
         "email": "christich17@gmail.com",
         "phone": "N/A",
         "hours": "N/A"
+    },
+    "25": {
+        "name": "Λυκούργος Μαγκαφάς",
+        "email": "magafas@cs.duth.gr",
+        "phone": "N/A",
+        "hours": "N/A"
+    },
+    "26": {
+        "name": "Δημήτριος Βεζέρης",
+        "email": "mad.vezeris@ioniki.net",
+        "phone": "N/A",
+        "hours": "N/A"
     }
 }

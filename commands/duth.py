@@ -57,7 +57,7 @@ class Duth(commands.Cog):
         books = pd.read_csv('data/books.csv')
 
         pages = []
-        TOTAL_PAGES = 7
+        TOTAL_PAGES = 8
         for i in range(0, TOTAL_PAGES):
             semester = i+1
             filtered_books = books[books['semester'] == semester]
