@@ -24,7 +24,7 @@ async def on_ready():
         bot.loop.create_task(status_checker.check_duth_status(bot))
     else:
         print("Running locally. Background tasks not started.")
-        bot.loop.create_task(feed_checker.check_feed(bot))
+        #bot.loop.create_task(feed_checker.check_feed(bot))
 
 async def load_extensions():
     await bot.load_extension('commands.duth')
