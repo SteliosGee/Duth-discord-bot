@@ -3,6 +3,7 @@ import discord
 import json
 import pandas as pd
 import asyncio
+from datetime import datetime
 
 # Define a setup function to allow the main bot file to register this command
 async def setup(bot):
@@ -55,6 +56,8 @@ class Duth(commands.Cog):
     async def books(self, ctx):
 
         books = pd.read_csv('data/books.csv')
+        today = datetime.now()
+        todayMonthId = today.month 
 
         pages = []
         TOTAL_PAGES = 8
@@ -80,8 +83,12 @@ class Duth(commands.Cog):
                 highestRole = i
 
         if highestRole > -1:
-            pageindex = highestRole * 2
-            message = await ctx.send(embed=pages[pageindex])
+            if todayMonthId >= 9 or 1: #vlepei an einai xhmerino h earino eksamino
+                pageindex = highestRole
+                message = await ctx.send(embed=pages[pageindex])
+            else:
+                pageindex = highestRole * 2
+                message = await ctx.send(embed=pages[pageindex])
         else:
             message = await ctx.send(embed=pages[0])
             pageindex = 0
