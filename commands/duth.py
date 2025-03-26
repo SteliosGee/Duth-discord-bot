@@ -52,78 +52,78 @@ class Duth(commands.Cog):
         except ValueError:
             await ctx.send("Δώσε έναν έγκυρο αριθμό.")
 
-    @commands.command()
-    async def books(self, ctx):
+@commands.command()
+async def books(self, ctx):
+    books = pd.read_csv('data/books.csv')
+    today = datetime.now()
+    todayMonthId = today.month
 
-        books = pd.read_csv('data/books.csv')
-        today = datetime.now()
-        todayMonthId = today.month 
+    pages = []
+    TOTAL_PAGES = 8
 
-        pages = []
-        TOTAL_PAGES = 8
-        for i in range(0, TOTAL_PAGES):
-            semester = i+1
-            filtered_books = books[books['semester'] == semester]
-            filtered_books = filtered_books[['subject','code']]
-            page = discord.Embed (
-                title = f"__{i+1}ο Εξάμηνο__",
-                description="__Κωδικοί Συγγραμάτων__",
-                colour = discord.Colour.orange()
-            )
-            for i in range(0, len(filtered_books)):
-                page.add_field(name = filtered_books['subject'].iloc[i], value = filtered_books['code'].iloc[i], inline = False)
-            page.set_footer(text = "Link για τις δηλώσεις: https://service.eudoxus.gr/student")
-            pages.append(page)
+    # Δημιουργία των embed σελίδων για κάθε εξάμηνο
+    for i in range(TOTAL_PAGES):
+        semester = i + 1
+        filtered_books = books[books['semester'] == semester]
+        filtered_books = filtered_books[['subject', 'code']]
         
-        roles = ['1ο Έτος', '2ο Έτος', '3ο Έτος', '4ο Έτος']
-        highestRole = -1
+        page = discord.Embed(
+            title=f"__{semester}ο Εξάμηνο__",
+            description="__Κωδικοί Συγγραμμάτων__",
+            colour=discord.Colour.orange()
+        )
+        for _, row in filtered_books.iterrows():
+            page.add_field(name=row['subject'], value=row['code'], inline=False)
+        page.set_footer(text="Link για τις δηλώσεις: https://service.eudoxus.gr/student")
+        pages.append(page)
 
-        for i, role in enumerate(roles):
-            if discord.utils.get(ctx.guild.roles, name=role) in ctx.author.roles:
-                highestRole = i
+    # Ρόλοι για τα έτη φοίτησης
+    roles = ['1ο Έτος', '2ο Έτος', '3ο Έτος', '4ο Έτος']
+    highestRole = -1
 
-        if highestRole > -1:
-            if todayMonthId >= 9 or 1: #vlepei an einai xhmerino h earino eksamino
-                pageindex = highestRole
-                message = await ctx.send(embed=pages[pageindex])
-            else:
-                pageindex = highestRole * 2
-                message = await ctx.send(embed=pages[pageindex])
-        else:
-            message = await ctx.send(embed=pages[0])
-            pageindex = 0
+    # Εύρεση του υψηλότερου ρόλου του χρήστη
+    for i, role in enumerate(roles):
+        if discord.utils.get(ctx.guild.roles, name=role) in ctx.author.roles:
+            highestRole = i
 
-        reactions = ['⏮', '◀', '▶', '⏭']
-        for reaction in reactions:
-            await message.add_reaction(reaction)
+    if highestRole > -1:
+        # Υπολογισμός εξαμήνου με βάση την ημερομηνία
+        if todayMonthId >= 9 or todayMonthId <= 1:  # Χειμερινό εξάμηνο
+            pageindex = highestRole * 2  # 0 -> 1ο, 1 -> 3ο, 2 -> 5ο, 3 -> 7ο
+        else:  # Θερινό εξάμηνο
+            pageindex = highestRole * 2 + 1  # 0 -> 2ο, 1 -> 4ο, 2 -> 6ο, 3 -> 8ο
+    else:
+        pageindex = 0  # Αν δεν έχει κάποιον ρόλο, δείξε το 1ο εξάμηνο
 
-        def check(reaction, user):
-            return user == ctx.author
+    message = await ctx.send(embed=pages[pageindex])
 
-        reaction = None
-        while True:
-            try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout = 30.0, check = check)
-                await message.remove_reaction(reaction, user)
-                
-                if str(reaction) == '⏮':
-                    pageindex = 0
-                    await message.edit(embed = pages[pageindex])
-                elif str(reaction) == '◀':
-                    if pageindex > 0:
-                        pageindex -= 1
-                        await message.edit(embed = pages[pageindex])
-                elif str(reaction) == '▶':
-                    if pageindex < TOTAL_PAGES - 1:
-                        pageindex += 1
-                        await message.edit(embed = pages[pageindex])
-                elif str(reaction) == '⏭':
-                    pageindex = TOTAL_PAGES - 1
-                    await message.edit(embed = pages[pageindex])
-            except asyncio.TimeoutError:
-                break
-            
-        await message.clear_reactions()
+    reactions = ['⏮', '◀', '▶', '⏭']
+    for reaction in reactions:
+        await message.add_reaction(reaction)
+
+    def check(reaction, user):
+        return user == ctx.author and str(reaction.emoji) in reactions
+
+    while True:
+        try:
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+            await message.remove_reaction(reaction, user)
+
+            if str(reaction.emoji) == '⏮':
+                pageindex = 0
+            elif str(reaction.emoji) == '◀' and pageindex > 0:
+                pageindex -= 1
+            elif str(reaction.emoji) == '▶' and pageindex < TOTAL_PAGES - 1:
+                pageindex += 1
+            elif str(reaction.emoji) == '⏭':
+                pageindex = TOTAL_PAGES - 1
+
+            await message.edit(embed=pages[pageindex])
+
+        except asyncio.TimeoutError:
+            break
+
+    await message.clear_reactions()
 
     @commands.command()
     async def services(self, ctx):
