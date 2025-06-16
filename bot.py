@@ -19,9 +19,10 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game("-help"))
     print(os.getcwd())
     print("Bot is ready.")
-    if config.hostname == "ihubot":
+    if config.hostname == "debian-main":
         
         bot.loop.create_task(status_checker.check_duth_status(bot))
+        bot.loop.create_task(feed_checker.check_feed(bot))
     else:
         print("Running locally. Background tasks not started.")
         #bot.loop.create_task(feed_checker.check_feed(bot))
