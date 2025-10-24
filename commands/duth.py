@@ -232,3 +232,31 @@ class Duth(commands.Cog):
         )
         e.add_field(name="__Link__", value="https://cs.duth.gr/cs_hosting/attachments/webpages/el_study_guide.pdf", inline=False)
         await ctx.send(embed=e)
+
+    @commands.command()
+    async def readybooks(self, ctx):
+        books = pd.read_csv('data/books.csv')
+        today = datetime.now()
+        todayMonthId = today.month
+
+        pages = []
+        TOTAL_PAGES = 8
+
+        # Δημιουργία των embed σελίδων για κάθε εξάμηνο
+        for i in range(TOTAL_PAGES):
+            semester = i + 1
+            filtered_books = books[books['semester'] == semester]
+            filtered_books = filtered_books[['subject', 'code']]
+            
+            page = discord.Embed(
+                title=f"__{semester}ο Εξάμηνο__",
+                description="__Κωδικοί Συγγραμμάτων__",
+                colour=discord.Colour.orange()
+            )
+            for _, row in filtered_books.iterrows():
+                page.add_field(name=row['subject'], value=row['code'], inline=False)
+            page.set_footer(text="Link για τις δηλώσεις: https://service.eudoxus.gr/student")
+            pages.append(page)
+
+        for i in range(TOTAL_PAGES):
+            message = await ctx.send(embed=pages[i])
