@@ -258,5 +258,12 @@ class Duth(commands.Cog):
             page.set_footer(text="Link για τις δηλώσεις: https://service.eudoxus.gr/student")
             pages.append(page)
 
-        for i in range(TOTAL_PAGES):
+        page = discord.Embed(
+            title=f"**Link για τις δηλώσεις: **",
+            description="https://service.eudoxus.gr/student",
+            colour=discord.Colour.blue()
+        )        
+        pages.append(page)
+
+        for i in range(TOTAL_PAGES+1):
             message = await ctx.send(embed=pages[i])
