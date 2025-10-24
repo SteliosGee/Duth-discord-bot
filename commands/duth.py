@@ -234,10 +234,31 @@ class Duth(commands.Cog):
         await ctx.send(embed=e)
 
     @commands.command()
+    @commands.has_permissions(manage_messages=True)
+    async def clear(self, ctx, amount: int):
+        if amount <= 0:
+            await ctx.send("Please specify a number greater than 0")
+            return
+            
+        await ctx.channel.purge(limit=amount + 1)
+        
+        confirmation = await ctx.send(f"✅ Cleared {amount} messages")
+        await asyncio.sleep(5)
+        await confirmation.delete()
+    
+    @clear.error
+    async def clear_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("You don't have permission to use this command!")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("Please specify the number of messages to clear\nUsage: `-clear <number>`")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send("Please provide a valid number")
+
+    @commands.command()
+    @commands.has_permissions(manage_messages=True)
     async def readybooks(self, ctx):
         books = pd.read_csv('data/books.csv')
-        today = datetime.now()
-        todayMonthId = today.month
 
         pages = []
         TOTAL_PAGES = 8
@@ -255,7 +276,7 @@ class Duth(commands.Cog):
             )
             for _, row in filtered_books.iterrows():
                 page.add_field(name=row['subject'], value=row['code'], inline=False)
-            page.set_footer(text="Link για τις δηλώσεις: https://service.eudoxus.gr/student")
+            # page.set_footer(text="Link για τις δηλώσεις: https://service.eudoxus.gr/student")
             pages.append(page)
 
         page = discord.Embed(
